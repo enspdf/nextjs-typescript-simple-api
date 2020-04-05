@@ -3,6 +3,7 @@ import sqlite from "sqlite";
 import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { secret } from "./secret";
+import cookie from "cookie";
 
 export default async function login(req: NextApiRequest, res: NextApiResponse) {
     const db = await sqlite.open("./mydb.sqlite");
@@ -15,7 +16,15 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
         if (isSamePassword) {
             const claims = { sub: person.id, name: person.name, email: person.email };
             const jwt = sign(claims, secret, { expiresIn: "1h" });
-            res.json({ authToken: jwt });
+
+            res.setHeader("Set-Cookie", cookie.serialize("auth", jwt, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                sameSite: "strict",
+                maxAge: 3600,
+                path: "/"
+            }));
+            res.json({ message: "Welcome back to the app" });
         } else {
             res.json({ message: "Ups, something went wrong!" });
         }

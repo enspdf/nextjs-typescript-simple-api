@@ -1,3 +1,3 @@
-const Home = () => <h1>Hello world!</h1>;
+import { HomePage } from "../containers/Homepage";
 
-export default Home;
+export default HomePage;
