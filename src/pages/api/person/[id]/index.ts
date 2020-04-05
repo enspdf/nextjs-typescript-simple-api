@@ -11,7 +11,7 @@ export default async function getPersonById(req: NextApiRequest, res: NextApiRes
         result.finalize();
     }
 
-    const person = await db.get("SELECT * FROM person WHERE id = ?", [req.query.id]);
+    const person = await db.get("SELECT id, email, name FROM person WHERE id = ?", [req.query.id]);
 
     res.json(person);
 }
